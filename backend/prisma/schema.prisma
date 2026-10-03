@@ -1,0 +1,154 @@
+// Aegis Phase 1 schema: Auth, Multi-Tenancy, Gateway Core (BYOK), Semantic Cache analytics.
+// Prisma 7: the connection URL lives in prisma.config.ts, not here.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  DEVELOPER
+  VIEWER
+}
+
+enum Provider {
+  OPENAI
+  GEMINI
+  CLAUDE
+  OLLAMA
+}
+
+enum LogStatus {
+  SUCCESS
+  CACHED
+  ERROR
+}
+
+// Root tenant. Every other row is scoped to exactly one organization.
+model Organization {
+  id           String        @id @default(uuid())
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  users        User[]
+  teams        Team[]
+  applications Application[]
+  providerKeys ProviderKey[]
+}
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  passwordHash    String
+  name            String
+  role            Role         @default(DEVELOPER)
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  teamMemberships TeamMember[]
+  apiKeysCreated  ApiKey[]
+  createdAt       DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+// Teams scope visibility inside one organization.
+model Team {
+  id             String        @id @default(uuid())
+  name           String
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members        TeamMember[]
+  applications   Application[]
+  createdAt      DateTime      @default(now())
+
+  @@unique([organizationId, name])
+}
+
+model TeamMember {
+  id       String   @id @default(uuid())
+  userId   String
+  teamId   String
+  joinedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+  @@index([teamId])
+}
+
+// An application = one client app that calls the gateway. Always belongs to a team.
+model Application {
+  id             String       @id @default(uuid())
+  name           String
+  organizationId String
+  teamId         String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  team           Team         @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  apiKeys        ApiKey[]
+  auditLogs      AuditLog[]
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, teamId])
+}
+
+// Gateway keys handed to client apps. Only the SHA-256 hash is stored.
+model ApiKey {
+  id            String      @id @default(uuid())
+  keyHash       String      @unique
+  keyPrefix     String
+  label         String
+  applicationId String
+  createdById   String
+  isActive      Boolean     @default(true)
+  lastUsedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdBy     User        @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  auditLogs     AuditLog[]
+
+  @@index([applicationId])
+}
+
+// BYOK: the customer's own provider key, AES-256-GCM encrypted at rest.
+model ProviderKey {
+  id             String       @id @default(uuid())
+  provider       Provider
+  label          String
+  encryptedKey   String
+  keyHint        String
+  organizationId String
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, provider, isActive])
+}
+
+// One row per gateway request. Powers cache-hit and savings analytics.
+model AuditLog {
+  id               String      @id @default(uuid())
+  applicationId    String
+  apiKeyId         String?
+  provider         Provider
+  model            String
+  status           LogStatus
+  promptTokens     Int         @default(0)
+  completionTokens Int         @default(0)
+  totalTokens      Int         @default(0)
+  latencyMs        Int         @default(0)
+  costUsd          Float       @default(0)
+  savedCostUsd     Float       @default(0)
+  cacheHit         Boolean     @default(false)
+  similarityScore  Float?
+  errorMessage     String?
+  createdAt        DateTime    @default(now())
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  apiKey           ApiKey?     @relation(fields: [apiKeyId], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, createdAt])
+  @@index([provider, createdAt])
+}

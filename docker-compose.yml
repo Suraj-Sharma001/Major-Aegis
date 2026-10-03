@@ -1,0 +1,37 @@
+# Postgres + Redis for Aegis_MajorP.
+# Host ports (5433 / 6380) and volume/container names differ from the main Aegis project
+# on purpose, so BOTH projects can run at the same time without clashing.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aegis_majorp_postgres
+    environment:
+      POSTGRES_USER: aegis
+      POSTGRES_PASSWORD: aegis_password
+      POSTGRES_DB: aegis_majorp
+    ports:
+      - "5433:5432"
+    volumes:
+      - aegis_majorp_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegis -d aegis_majorp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: aegis_majorp_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - aegis_majorp_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  aegis_majorp_pg_data:
+  aegis_majorp_redis_data:
