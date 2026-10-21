@@ -124,23 +124,6 @@ Gateway response: `{model, provider, content, usage, latency_ms, cache_hit, cach
 `HIT if similarity ≥ 0.90  OR  (similarity ≥ 0.65 AND keyword overlap ≥ 0.5)` — all three numbers are in `.env` (`CACHE_SIM_STRONG`, `CACHE_SIM_WEAK`, `CACHE_KEYWORD_MIN`).
 Keyword overlap = Jaccard similarity of the non-stopword tokens. Entries are scoped per **organization + model + conversation context**, so one tenant can never read another tenant's cached answer. While `NODE_ENV` is not `production`, a miss includes `cache_debug` (best similarity/overlap seen) to help tune thresholds.
 
-## Working on both projects
-
-- **Main `Aegis`** keeps everything unfinished (UI, governance, rate limiting, …). **`Aegis_MajorP`** is the phase-by-phase version you present: each phase = the previous phase + that phase's features, nothing more.
-- Suggested later phases (adjust to what your guide expects): **2** governance (PII blocking, injection firewall) + rate limiting · **3** cost/usage dashboards + UI · **4** hardening (tests, Docker for the backend, CI, docs).
-- When you fix a bug in shared logic (cache, authz, providers, crypto), fix it in both. Keep a one-line note per backport so the two don't drift silently.
-- Build the next phase by porting from main, then re-run `npm run smoke` and add checks for the new feature.
-
-### Deliberate differences from the main project (as far as I know it)
-
-| Area | Aegis_MajorP | Note |
-|---|---|---|
-| ORM | Prisma **7** (driver adapter, `prisma.config.ts`) | don't share `node_modules` between the projects |
-| Encryption key | its own `ENCRYPTION_KEY` | main derives it from `JWT_SECRET`; rotating the JWT secret here can't break stored provider keys |
-| `Application.teamId` | **required** | no backfill script needed in a fresh database |
-| Registration | also creates a "Default Team" | so an app can be created immediately |
-| Dependency health | `GET /health` reports DB / Redis / embedding | cache fails open and says so via `cache_status` |
-
 ## Offline test doubles (optional)
 
 `npm run mock:embedding` (port 8002, hashing-based, **not** semantic) and `npm run mock:providers` (port 9100, fakes OpenAI/Claude/Gemini/Ollama) let you run the full smoke test with no model download and no internet:
