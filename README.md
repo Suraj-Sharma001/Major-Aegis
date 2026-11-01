@@ -23,15 +23,6 @@ Client app ──x-api-key──▶ POST /v1/chat/completions
                    OpenAI | Claude | Gemini | Ollama
 ```
 
-## Ports (so it can run next to the main Aegis project)
-
-| Thing | Main Aegis | Aegis_MajorP |
-|---|---|---|
-| Backend | 8080 | **8081** |
-| Postgres (host) | 5432 | **5433** |
-| Redis (host) | 6379 | **6380** |
-| Embedding service | 8001 | **8002** |
-
 ## Run it (Windows / PowerShell; macOS/Linux is the same minus the venv activate path)
 
 ```powershell
@@ -124,15 +115,6 @@ Gateway response: `{model, provider, content, usage, latency_ms, cache_hit, cach
 `HIT if similarity ≥ 0.90  OR  (similarity ≥ 0.65 AND keyword overlap ≥ 0.5)` — all three numbers are in `.env` (`CACHE_SIM_STRONG`, `CACHE_SIM_WEAK`, `CACHE_KEYWORD_MIN`).
 Keyword overlap = Jaccard similarity of the non-stopword tokens. Entries are scoped per **organization + model + conversation context**, so one tenant can never read another tenant's cached answer. While `NODE_ENV` is not `production`, a miss includes `cache_debug` (best similarity/overlap seen) to help tune thresholds.
 
-## Offline test doubles (optional)
-
-`npm run mock:embedding` (port 8002, hashing-based, **not** semantic) and `npm run mock:providers` (port 9100, fakes OpenAI/Claude/Gemini/Ollama) let you run the full smoke test with no model download and no internet:
-
-```
-OPENAI_BASE_URL=http://localhost:9100 ANTHROPIC_BASE_URL=http://localhost:9100 GEMINI_BASE_URL=http://localhost:9100 OLLAMA_BASE_URL=http://localhost:9100 npm run dev
-SMOKE_ALL_PROVIDERS=1 npm run smoke
-```
-
-## Known limitations (Phase 1)
+## What next : 
 
 No streaming · no rate limiting · no PII/governance scan · pricing table in `pricing.service.js` is illustrative (edit it) · cache lookup is a linear scan capped at 500 entries per org+model (fine for this scale; use a vector index later) · no pagination, no user-role editing UI/endpoint.
