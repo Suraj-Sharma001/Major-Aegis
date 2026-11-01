@@ -5,5 +5,3 @@ __pycache__/
 *.log
 .DS_Store
 
-# Internal docs (testing guides, notes — not pushed to git)
-docs/
