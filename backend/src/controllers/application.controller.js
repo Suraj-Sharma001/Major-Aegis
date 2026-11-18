@@ -4,7 +4,6 @@ import { generateApiKey } from '../lib/crypto.js';
 import { assertCanAccessApplication, assertRole, assertTeamInOrg, getMemberTeamIds, isAdmin } from '../lib/authz.js';
 import { createApplicationSchema, createKeySchema } from '../utils/validators.js';
 
-
 export async function listApplications(req, res) {
   const where = { organizationId: req.user.organizationId };
   if (!isAdmin(req.user)) where.teamId = { in: await getMemberTeamIds(req.user.id) };
@@ -16,7 +15,6 @@ export async function listApplications(req, res) {
   res.json({ applications });
 }
 
-
 export async function createApplication(req, res) {
   assertRole(req.user, 'ADMIN', 'DEVELOPER');
   const { name, teamId } = createApplicationSchema.parse(req.body);
@@ -27,14 +25,12 @@ export async function createApplication(req, res) {
     if (!memberOf.includes(team.id)) throw new AppError(403, 'You can only create applications in teams you belong to');
   }
   
-
-  const application = await prisma.application.create({
+ const application = await prisma.application.create({
     data: { name, teamId: team.id, organizationId: req.user.organizationId },
     include: { team: { select: { id: true, name: true } } },
   });
   res.status(201).json({ application });
 }
-
 
 export async function issueKey(req, res) {
   assertRole(req.user, 'ADMIN', 'DEVELOPER');
@@ -49,7 +45,6 @@ export async function issueKey(req, res) {
   res.status(201).json({ ...record, key, warning: 'Save this key now. It is shown only once and cannot be recovered.' });
 }
 
-
 export async function listKeys(req, res) {
   const app = await assertCanAccessApplication(req.user, req.params.id);
   const keys = await prisma.apiKey.findMany({
@@ -59,7 +54,6 @@ export async function listKeys(req, res) {
   });
   res.json({ keys });
 }
-
 
 export async function revokeKey(req, res) {
   assertRole(req.user, 'ADMIN', 'DEVELOPER');
@@ -71,7 +65,6 @@ export async function revokeKey(req, res) {
   if (result.count === 0) throw new AppError(404, 'API key not found');
   res.json({ revoked: true });
 }
-
 
 export async function listLogs(req, res) {
   const app = await assertCanAccessApplication(req.user, req.params.id);
