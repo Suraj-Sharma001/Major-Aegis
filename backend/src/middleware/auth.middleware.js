@@ -1,3 +1,6 @@
+
+
+
 import { prisma } from '../config/prisma.js';
 import { verifyToken } from '../lib/jwt.js';
 import { AppError } from '../lib/errors.js';
@@ -24,6 +27,17 @@ export async function requireAuth(req, _res, next) {
   if (!user) throw new AppError(401, 'User no longer exists');
   req.user = user;
   next();
+
+// 
+//  const user = await.prisma.user.findUnique({
+ //   where : {id:payload.userId },
+//   select :{id :true,email:false,name:true ,role:true ,organizationId :true},
+//  });
+
+
+
+
+
 }
 
 export const requireRole = (...roles) => (req, _res, next) => {
