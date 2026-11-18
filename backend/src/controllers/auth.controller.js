@@ -1,8 +1,11 @@
+
 import bcrypt from 'bcryptjs';
 import { prisma } from '../config/prisma.js';
 import { signToken } from '../lib/jwt.js';
 import { AppError } from '../lib/errors.js';
 import { registerSchema, loginSchema } from '../utils/validators.js';
+
+
 
 const publicUser = (u) => ({ id: u.id, email: u.email, name: u.name, role: u.role, organizationId: u.organizationId });
 const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', 10); // keeps login timing similar for unknown emails
@@ -25,6 +28,8 @@ export async function register(req, res) {
     return { org, user, team };
   });
 
+
+
   res.status(201).json({
     token: signToken(user),
     user: publicUser(user),
@@ -33,6 +38,8 @@ export async function register(req, res) {
   });
 }
 
+
+
 export async function login(req, res) {
   const { email, password } = loginSchema.parse(req.body);
   const user = await prisma.user.findUnique({ where: { email } });
@@ -40,6 +47,8 @@ export async function login(req, res) {
   if (!user || !ok) throw new AppError(401, 'Invalid email or password');
   res.json({ token: signToken(user), user: publicUser(user) });
 }
+
+
 
 export async function me(req, res) {
   const [org, memberships] = await Promise.all([
