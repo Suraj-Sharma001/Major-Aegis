@@ -24,8 +24,8 @@ export async function createApplication(req, res) {
     const memberOf = await getMemberTeamIds(req.user.id);
     if (!memberOf.includes(team.id)) throw new AppError(403, 'You can only create applications in teams you belong to');
   }
-
-  const application = await prisma.application.create({
+  
+ const application = await prisma.application.create({
     data: { name, teamId: team.id, organizationId: req.user.organizationId },
     include: { team: { select: { id: true, name: true } } },
   });

@@ -54,7 +54,7 @@ export async function addMember(req, res) {
         role: role ?? 'DEVELOPER',
         organizationId: req.user.organizationId,
       },
-    });
+     });
     created = true;
   }
 
@@ -77,3 +77,4 @@ export async function removeMember(req, res) {
   if (result.count === 0) throw new AppError(404, 'That user is not a member of this team');
   res.json({ removed: true });
 }
+
