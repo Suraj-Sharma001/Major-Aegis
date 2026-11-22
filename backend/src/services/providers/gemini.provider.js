@@ -15,7 +15,6 @@ export async function chat({ apiKey, model, messages, temperature, maxTokens }) 
   if (maxTokens) generationConfig.maxOutputTokens = maxTokens;
   if (Object.keys(generationConfig).length) body.generationConfig = generationConfig;
 
-  // Key goes in a header (not the query string) so it can never leak into URLs or logs.
   const url = `${env.providerBaseUrls.GEMINI}/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const data = await postJson('GEMINI', url, { 'x-goog-api-key': apiKey }, body);
 

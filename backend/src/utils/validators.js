@@ -15,7 +15,6 @@ export const loginSchema = z.object({ email, password: z.string().min(1) });
 
 export const createTeamSchema = z.object({ name: z.string().trim().min(1).max(100) });
 
-// Adds an existing org user to a team, or (Admin) creates the account on the spot.
 export const addMemberSchema = z.object({
   email,
   name: z.string().trim().min(1).max(100).optional(),
@@ -31,7 +30,7 @@ export const createApplicationSchema = z.object({
 export const createKeySchema = z.object({ label: z.string().trim().min(1).max(100).default('default') });
 
 export const providerKeySchema = z.object({
-  provider: z.enum(['OPENAI', 'GEMINI', 'CLAUDE']), // Ollama is local and needs no key
+  provider: z.enum(['OPENAI', 'GEMINI', 'CLAUDE']),
   label: z.string().trim().min(1).max(100).default('default'),
   apiKey: z.string().trim().min(8, 'apiKey looks too short'),
 });

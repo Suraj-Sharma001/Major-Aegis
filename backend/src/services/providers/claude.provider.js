@@ -3,7 +3,6 @@ import { AppError } from '../../lib/errors.js';
 import { postJson } from './http.js';
 
 export async function chat({ apiKey, model, messages, temperature, maxTokens }) {
-  // Anthropic takes the system prompt as a top-level field and requires max_tokens.
   const system = messages.filter((m) => m.role === 'system').map((m) => m.content).join('\n\n');
   const convo = messages.filter((m) => m.role !== 'system').map((m) => ({ role: m.role, content: m.content }));
 

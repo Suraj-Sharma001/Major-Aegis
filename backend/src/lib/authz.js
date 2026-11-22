@@ -14,10 +14,6 @@ export async function getMemberTeamIds(userId) {
   return rows.map((r) => r.teamId);
 }
 
-// Single source of truth for "can this dashboard user touch this application?"
-//  - other organization / unknown id -> 404 (do not reveal existence)
-//  - ADMIN -> always allowed inside their org
-//  - DEVELOPER / VIEWER -> only if they are a member of the application's team
 export async function assertCanAccessApplication(user, applicationId) {
   const app = await prisma.application.findFirst({
     where: { id: applicationId, organizationId: user.organizationId },

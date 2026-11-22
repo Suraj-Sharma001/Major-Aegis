@@ -29,7 +29,6 @@ if (!/^[0-9a-fA-F]{64}$/.test(encryptionKey)) {
   throw new Error('ENCRYPTION_KEY must be exactly 64 hex characters (32 bytes).');
 }
 
-// BYOK: there is deliberately NO OPENAI_API_KEY / GEMINI_API_KEY / ANTHROPIC_API_KEY here.
 export const env = {
   nodeEnv: str('NODE_ENV', 'development'),
   isProd: str('NODE_ENV', 'development') === 'production',

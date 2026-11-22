@@ -6,9 +6,6 @@ import { callProvider, resolveProvider } from '../services/providers/index.js';
 import { calculateCost } from '../services/pricing.service.js';
 import * as semanticCache from '../services/semanticCache.service.js';
 
-// Phase 1 pipeline:
-//   API-key auth (middleware) -> validate -> semantic cache lookup -> provider call (BYOK) -> audit log -> respond
-// Later phases slot rate limiting and governance in before the cache lookup.
 export async function chatCompletion(req, res) {
   const started = Date.now();
   const body = chatSchema.parse(req.body);
@@ -24,7 +21,6 @@ export async function chatCompletion(req, res) {
       .catch((err) => console.error('[audit] failed to write log:', err.message));
 
   try {
-    // ---- 1. semantic cache ----
     const ctx = semanticCache.buildCacheContext(messages);
     let cacheStatus = 'bypass';
     let lookup = null;
@@ -62,7 +58,6 @@ export async function chatCompletion(req, res) {
       });
     }
 
-    // ---- 2. provider call (organization's own key) ----
     const result = await callProvider({ provider, organizationId, model, messages, temperature, maxTokens });
     const cost = calculateCost(provider, model, result.usage.prompt_tokens, result.usage.completion_tokens);
     const latency = Date.now() - started;
@@ -76,7 +71,6 @@ export async function chatCompletion(req, res) {
       costUsd: cost,
     });
 
-    // ---- 3. remember the answer for next time ----
     if (lookup?.status === 'miss') {
       await semanticCache.store({
         organizationId,
@@ -97,7 +91,6 @@ export async function chatCompletion(req, res) {
       cache_status: cacheStatus,
       cost_usd: cost,
     };
-    // Handy while tuning thresholds; hidden in production.
     if (!env.isProd && lookup?.status === 'miss') {
       out.cache_debug = {
         best_similarity: Number(lookup.bestSimilarity.toFixed(4)),

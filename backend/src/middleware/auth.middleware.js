@@ -2,7 +2,6 @@ import { prisma } from '../config/prisma.js';
 import { verifyToken } from '../lib/jwt.js';
 import { AppError } from '../lib/errors.js';
 
-// Dashboard/API-management auth (JWT). Loads the user fresh so role changes and deletions apply instantly.
 export async function requireAuth(req, _res, next) {
   const header = req.headers.authorization || '';
   const [scheme, token] = header.split(' ');

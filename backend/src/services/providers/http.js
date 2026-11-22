@@ -1,8 +1,6 @@
 import { env } from '../../config/env.js';
 import { AppError } from '../../lib/errors.js';
 
-// POST JSON to a provider and normalise failures into AppErrors.
-// Never put request headers (API keys) into error messages.
 export async function postJson(providerName, url, headers, body) {
   let res;
   try {

@@ -27,7 +27,7 @@ export async function applicationAnalytics(req, res) {
   ]);
 
   const total = totals._count._all;
-  const served = total - errors; // requests that actually returned an answer
+  const served = total - errors;
   const avgFor = (flag) => latencyByCache.find((r) => r.cacheHit === flag)?._avg.latencyMs ?? null;
 
   res.json({

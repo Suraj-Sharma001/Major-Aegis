@@ -1,9 +1,8 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 import { env } from '../config/env.js';
 
-const KEY = Buffer.from(env.encryptionKey, 'hex'); // 32 bytes -> AES-256
+const KEY = Buffer.from(env.encryptionKey, 'hex');
 
-// Layout (base64): [12-byte IV][16-byte auth tag][ciphertext]
 export function encrypt(plain) {
   const iv = randomBytes(12);
   const cipher = createCipheriv('aes-256-gcm', KEY, iv);
@@ -23,7 +22,6 @@ export function decrypt(payload) {
 
 export const sha256 = (s) => createHash('sha256').update(s).digest('hex');
 
-// Gateway key: aegis_<48 hex>. Plaintext is shown once; only the hash is stored.
 export function generateApiKey() {
   const key = `aegis_${randomBytes(24).toString('hex')}`;
   return { key, hash: sha256(key), prefix: key.slice(0, 12) };

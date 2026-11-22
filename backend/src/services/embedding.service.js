@@ -1,6 +1,5 @@
 import { env } from '../config/env.js';
 
-// Calls the Python embedding microservice: POST /embed {texts:[...]} -> {embeddings:[[...]], model}
 export async function embed(text) {
   const res = await fetch(`${env.embedding.url}/embed`, {
     method: 'POST',

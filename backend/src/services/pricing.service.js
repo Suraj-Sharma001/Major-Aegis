@@ -1,6 +1,3 @@
-// Prices in USD per 1,000,000 tokens: [model-name prefix, input, output].
-// ILLUSTRATIVE VALUES. Providers change prices often; verify against their pricing pages and edit here.
-// First matching prefix wins, so keep more specific prefixes above general ones.
 const PRICES = [
   ['gpt-4o-mini', 0.15, 0.6],
   ['gpt-4o', 2.5, 10],
@@ -18,10 +15,10 @@ const PRICES = [
 ];
 
 export function calculateCost(provider, model, promptTokens, completionTokens) {
-  if (provider === 'OLLAMA') return 0; // local execution
+  if (provider === 'OLLAMA') return 0;
   const m = String(model).toLowerCase();
   const row = PRICES.find(([prefix]) => m.startsWith(prefix));
-  if (!row) return 0; // unknown model: cost not tracked (add it to PRICES)
+  if (!row) return 0;
   const [, inPerM, outPerM] = row;
   return (promptTokens * inPerM + completionTokens * outPerM) / 1_000_000;
 }

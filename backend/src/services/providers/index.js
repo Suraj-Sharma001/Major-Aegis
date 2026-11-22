@@ -8,7 +8,6 @@ import * as ollama from './ollama.provider.js';
 
 const ADAPTERS = { OPENAI: openai, CLAUDE: claude, GEMINI: gemini, OLLAMA: ollama };
 
-// gpt*/o1/o3/o4 -> OpenAI, claude* -> Claude, gemini* -> Gemini, everything else -> Ollama (local).
 export function resolveProvider(model) {
   const m = model.toLowerCase();
   if (/^(gpt|chatgpt|o\d)/.test(m)) return 'OPENAI';
@@ -17,7 +16,6 @@ export function resolveProvider(model) {
   return 'OLLAMA';
 }
 
-// BYOK: only the calling organization's own active key is ever used. There is no shared fallback.
 async function getOrgKey(organizationId, provider) {
   const record = await prisma.providerKey.findFirst({
     where: { organizationId, provider, isActive: true },

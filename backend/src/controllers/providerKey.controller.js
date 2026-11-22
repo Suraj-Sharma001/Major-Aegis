@@ -5,7 +5,6 @@ import { providerKeySchema } from '../utils/validators.js';
 
 const meta = { id: true, provider: true, label: true, keyHint: true, isActive: true, createdAt: true };
 
-// Metadata only. The key (even encrypted) is never returned.
 export async function listProviderKeys(req, res) {
   const keys = await prisma.providerKey.findMany({
     where: { organizationId: req.user.organizationId },
@@ -15,7 +14,6 @@ export async function listProviderKeys(req, res) {
   res.json({ keys });
 }
 
-// One active key per provider per org: adding a new one deactivates the previous (kept for audit history).
 export async function addProviderKey(req, res) {
   const { provider, label, apiKey } = providerKeySchema.parse(req.body);
   const record = await prisma.$transaction(async (tx) => {

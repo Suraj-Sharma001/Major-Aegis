@@ -2,7 +2,6 @@ import { env } from '../../config/env.js';
 import { AppError } from '../../lib/errors.js';
 import { postJson } from './http.js';
 
-// Local models: no API key, no SDK, plain REST.
 export async function chat({ model, messages, temperature, maxTokens }) {
   const options = {};
   if (temperature !== undefined) options.temperature = temperature;

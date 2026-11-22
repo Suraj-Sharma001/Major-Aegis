@@ -4,7 +4,6 @@ import { AppError } from '../lib/errors.js';
 import { assertTeamInOrg, getMemberTeamIds, isAdmin } from '../lib/authz.js';
 import { createTeamSchema, addMemberSchema } from '../utils/validators.js';
 
-// Admins see every team in the org; everyone else only the teams they belong to.
 export async function listTeams(req, res) {
   const where = { organizationId: req.user.organizationId };
   if (!isAdmin(req.user)) where.id = { in: await getMemberTeamIds(req.user.id) };
@@ -32,7 +31,6 @@ export async function listMembers(req, res) {
   res.json({ team: { id: team.id, name: team.name }, members: members.map((m) => ({ ...m.user, joinedAt: m.joinedAt })) });
 }
 
-// Admin adds an existing org user, or creates the teammate's account directly (no invite/email system).
 export async function addMember(req, res) {
   const team = await assertTeamInOrg(req.user, req.params.id);
   const { email, name, password, role } = addMemberSchema.parse(req.body);

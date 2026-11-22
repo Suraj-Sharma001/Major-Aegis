@@ -2,7 +2,6 @@ import { env } from '../../config/env.js';
 import { AppError } from '../../lib/errors.js';
 import { postJson } from './http.js';
 
-// Reasoning-style models (o-series, gpt-5) take max_completion_tokens and ignore custom temperature.
 const isReasoning = (model) => /^(o\d|gpt-5)/i.test(model);
 
 export async function chat({ apiKey, model, messages, temperature, maxTokens }) {

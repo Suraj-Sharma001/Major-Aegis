@@ -17,13 +17,13 @@ from pydantic import BaseModel, Field
 MODEL_NAME = os.getenv("EMBEDDING_MODEL", "BAAI/bge-base-en-v1.5")
 MAX_TEXTS = int(os.getenv("EMBEDDING_MAX_TEXTS", "32"))
 
-state = {"model": None, "dim": None}
+state = {"model": None, "dim": None}  #dim ka mtlb h size of embedding verctor
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    from sentence_transformers import SentenceTransformer  # imported here so --help / syntax checks stay fast
-
+    from sentence_transformers import SentenceTransformer  
+    # phle hi load kr liya because her req ke time load kiya to time lgega soo.
     print(f"[embedding] loading {MODEL_NAME} (first run downloads the model, ~400 MB)...")
     state["model"] = SentenceTransformer(MODEL_NAME)
     state["dim"] = state["model"].get_sentence_embedding_dimension()

@@ -8,7 +8,6 @@ export const redis = createClient({
 
 let lastLog = 0;
 redis.on('error', (err) => {
-  // Throttle: a down Redis would otherwise spam the console on every reconnect attempt.
   const now = Date.now();
   if (now - lastLog > 10000) {
     lastLog = now;
@@ -17,7 +16,6 @@ redis.on('error', (err) => {
 });
 redis.on('ready', () => console.log('[redis] connected'));
 
-// Fire-and-forget on purpose: the gateway must keep working (cache fails open) if Redis is down.
 export function connectRedis() {
   redis.connect().catch((err) => console.warn(`[redis] initial connect failed: ${err.message}`));
 }

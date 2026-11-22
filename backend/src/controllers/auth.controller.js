@@ -5,9 +5,8 @@ import { AppError } from '../lib/errors.js';
 import { registerSchema, loginSchema } from '../utils/validators.js';
 
 const publicUser = (u) => ({ id: u.id, email: u.email, name: u.name, role: u.role, organizationId: u.organizationId });
-const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', 10); // keeps login timing similar for unknown emails
+const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', 10);
 
-// Creates the organization, its first ADMIN, and a "Default Team" the admin belongs to.
 export async function register(req, res) {
   const { organizationName, name, email, password } = registerSchema.parse(req.body);
 

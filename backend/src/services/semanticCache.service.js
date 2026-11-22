@@ -3,23 +3,6 @@ import { redis, isRedisReady } from '../config/redis.js';
 import { env } from '../config/env.js';
 import { embed } from './embedding.service.js';
 
-/*
- * Hybrid semantic cache.
- *   HIT if  similarity >= STRONG
- *       OR (similarity >= WEAK AND keywordOverlap >= KEYWORD_MIN)
- *
- * Why hybrid: pure embedding similarity is unreliable on short, differently-worded queries
- * (paraphrases score 0.76-0.84), so keyword overlap acts as a second opinion for the middle band.
- *
- * Isolation: entries are scoped per (organization, model) and per conversation-context fingerprint,
- * so one tenant can never receive another tenant's cached answer, and the same question asked in a
- * different conversation context does not collide.
- *
- * Redis layout:
- *   aegis:cache:entry:<org>:<model>:<id>  -> JSON entry   (EX = TTL)
- *   aegis:cache:idx:<org>:<model>         -> ZSET of ids  (score = createdAt ms)
- */
-
 const STOPWORDS = new Set(
   ('a an the is are was were be been am do does did to of in on at for with and or but if so it its this that ' +
     'these those i me my you your we our they them what which who whom how why when where can could should would ' +
@@ -32,10 +15,9 @@ export function tokenize(text) {
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .split(/\s+/)
-    .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+    .filter((t) => t.length > 1 && !STOPWORDS.has(t));  // only unicode letter , number allow h
 }
 
-// Jaccard overlap of keyword sets (0..1). Conservative: needs a real share of the vocabulary.
 export function keywordOverlap(a, b) {
   const A = new Set(tokenize(a));
   const B = new Set(tokenize(b));
@@ -49,9 +31,9 @@ export function cosine(a, b) {
   if (a.length !== b.length) return 0;
   let dot = 0, na = 0, nb = 0;
   for (let i = 0; i < a.length; i += 1) {
-    dot += a[i] * b[i];
-    na += a[i] * a[i];
-    nb += b[i] * b[i];
+    dot += a[i] * b[i];  // A.B
+    na += a[i] * a[i];   // |A|
+    nb += b[i] * b[i];   // |B|
   }
   return na === 0 || nb === 0 ? 0 : dot / (Math.sqrt(na) * Math.sqrt(nb));
 }
@@ -61,8 +43,6 @@ export function isHit(similarity, overlap) {
   return similarity >= c.simStrong || (similarity >= c.simWeak && overlap >= c.keywordMin);
 }
 
-// Cache key material: the last user message is the "query"; everything before it is "context".
-// Returns null when the request should bypass the cache (e.g. last message is not from the user).
 export function buildCacheContext(messages) {
   const last = messages[messages.length - 1];
   if (!last || last.role !== 'user') return null;
@@ -83,18 +63,12 @@ async function loadEntries(s) {
   const dead = [];
   raw.forEach((val, i) => {
     if (val) entries.push(JSON.parse(val));
-    else dead.push(ids[i]); // TTL expired
+    else dead.push(ids[i]);
   });
   if (dead.length) await redis.zRem(idxKey(s), dead);
   return entries;
 }
 
-/**
- * @returns {Promise<
- *   {status:'hit', entry, similarity, overlap, embedding} |
- *   {status:'miss', embedding, bestSimilarity, bestOverlap} |
- *   {status:'disabled'|'unavailable', reason?: string}>}
- */
 export async function lookup({ organizationId, model, queryText, fingerprint }) {
   if (!env.cache.enabled) return { status: 'disabled' };
   if (!isRedisReady()) return { status: 'unavailable', reason: 'redis is not connected' };
@@ -133,7 +107,6 @@ export async function lookup({ organizationId, model, queryText, fingerprint }) 
   }
 }
 
-// Best-effort: a failed store must never fail the user's request.
 export async function store({ organizationId, model, queryText, fingerprint, embedding, response }) {
   if (!env.cache.enabled || !isRedisReady() || !embedding) return;
   try {

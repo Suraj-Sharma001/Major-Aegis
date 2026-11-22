@@ -20,7 +20,6 @@ export function createApp() {
   app.use(express.json({ limit: '1mb' }));
   if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 
-  // Dependency health. Postgres is required; Redis + embedding only affect the cache (it fails open).
   app.get('/health', async (_req, res) => {
     let database = 'up';
     try {
