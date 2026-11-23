@@ -46,9 +46,13 @@ export function isHit(similarity, overlap) {
 export function buildCacheContext(messages) {
   const last = messages[messages.length - 1];
   if (!last || last.role !== 'user') return null;
-  const context = messages.slice(0, -1).map((m) => [m.role, m.content]);
-  const fingerprint = createHash('sha256').update(JSON.stringify(context)).digest('hex').slice(0, 16);
-  return { queryText: last.content, fingerprint };
+  const context = messages
+    .slice(0, -1)
+    .filter((m) => m.role === 'system')
+    .map((m) => [m.role, m.content]);
+
+    const fingerprint = createHash('sha256').update(JSON.stringify(context)).digest('hex').slice(0, 16);
+    return { queryText: last.content, fingerprint };
 }
 
 const scope = (orgId, model) => `${orgId}:${String(model).toLowerCase()}`;

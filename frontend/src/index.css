@@ -1,0 +1,78 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 245 246 248;
+  --surface: 255 255 255;
+  --sunken: 238 240 243;
+  --line: 227 230 235;
+  --ink: 18 22 28;
+  --muted: 98 108 121;
+  --accent: 11 122 117;
+  --accent-ink: 255 255 255;
+  --saved: 190 114 8;
+  --danger: 200 55 45;
+  --ok: 22 138 90;
+  color-scheme: light;
+}
+[data-theme='dark'] {
+  --bg: 12 16 20;
+  --surface: 19 25 32;
+  --sunken: 26 33 42;
+  --line: 38 47 58;
+  --ink: 232 236 241;
+  --muted: 134 146 160;
+  --accent: 52 209 191;
+  --accent-ink: 7 28 26;
+  --saved: 240 168 60;
+  --danger: 244 114 104;
+  --ok: 74 205 150;
+  color-scheme: dark;
+}
+
+html, body, #root { height: 100%; }
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  font-feature-settings: 'ss01', 'cv11';
+}
+* { @apply border-line; }
+::selection { background: rgb(var(--accent) / 0.25); }
+:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 h-9 text-sm font-medium
+           transition-colors disabled:opacity-50 disabled:pointer-events-none select-none;
+  }
+  .btn-primary { @apply btn bg-accent text-accent-ink hover:brightness-110; }
+  .btn-ghost { @apply btn border border-line bg-surface text-ink hover:bg-sunken; }
+  .btn-danger { @apply btn bg-danger text-white hover:brightness-110; }
+  .btn-quiet { @apply btn text-muted hover:text-ink hover:bg-sunken; }
+  .input {
+    @apply w-full h-10 rounded-lg border border-line bg-surface px-3 text-sm text-ink
+           placeholder:text-muted/70 transition-colors hover:border-muted/40
+           focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20;
+  }
+  textarea.input { @apply h-auto py-2.5 leading-relaxed; }
+  .label { @apply block text-[13px] font-medium text-ink mb-1.5; }
+  .card { @apply rounded-xl border border-line bg-surface; }
+  .th { @apply text-left text-xs font-medium text-muted px-4 py-2.5 bg-sunken/50 first:rounded-tl-xl last:rounded-tr-xl; }
+  .td { @apply px-4 py-3 text-sm border-t border-line; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgb(var(--sunken)) 25%, rgb(var(--line) / 0.7) 50%, rgb(var(--sunken)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+.num { font-variant-numeric: tabular-nums; }
