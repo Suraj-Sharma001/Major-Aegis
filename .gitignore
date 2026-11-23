@@ -4,4 +4,4 @@ node_modules/
 __pycache__/
 *.log
 .DS_Store
-source_code_only.txt
+
