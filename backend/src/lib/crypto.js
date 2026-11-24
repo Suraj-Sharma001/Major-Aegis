@@ -22,6 +22,53 @@ export function decrypt(payload) {
 
 export const sha256 = (s) => createHash('sha256').update(s).digest('hex');
 
+
+//export function generateApiKey() {
+//  const key = `aegis_${randomBytes(24).toString('hex')}`;
+ // return { key, hash: sha256(key), prefix: key.slice(0, 12) };
+//}
+//export function generateApiKey(options = {}) {
+ // const { prefix, env, byteLength, expiresInDays } = {
+  /*  ...DEFAULT_OPTIONS,
+    ...options,
+  };
+
+  if (!prefix || typeof prefix !== 'string') {
+    throw new TypeError('API key prefix must be a non-empty string.');
+  }
+
+  if (!Number.isInteger(byteLength) || byteLength < 16) {
+    throw new RangeError('byteLength must be an integer of at least 16.');
+  }
+
+  const keyId = randomBytes(6).toString('hex');
+  const secret = randomBytes(byteLength).toString('base64url');
+  const core = `${prefix}_${env}_${keyId}_${secret}`;
+  const checksum = computeChecksum(core);
+  const key = `${core}_${checksum}`;
+
+  const createdAt = new Date();
+  const expiresAt =
+    expiresInDays && expiresInDays > 0
+      ? new Date(createdAt.getTime() + expiresInDays * 24 * 60 * 60 * 1000)
+      : null;
+
+  return {
+    key,
+    keyId,
+    prefix: `${prefix}_${env}`,
+    displayPrefix: key.slice(0, 16),
+    hash: sha256(key),
+    checksum,
+    createdAt: createdAt.toISOString(),
+    expiresAt: expiresAt ? expiresAt.toISOString() : null,
+  };
+}
+*/
+
+
+
+
 export function generateApiKey() {
   const key = `aegis_${randomBytes(24).toString('hex')}`;
   return { key, hash: sha256(key), prefix: key.slice(0, 12) };
