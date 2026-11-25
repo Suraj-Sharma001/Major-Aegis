@@ -40,7 +40,7 @@ export const env = {
   encryptionKey,
   embedding: {
     url: str('EMBEDDING_SERVICE_URL', 'http://localhost:8002').replace(/\/$/, ''),
-    timeoutMs: num('EMBEDDING_TIMEOUT_MS', 4000),
+    timeoutMs: num('EMBEDDING_TIMEOUT_MS', 15000),
   },
   cache: {
     enabled: bool('CACHE_ENABLED', true),
