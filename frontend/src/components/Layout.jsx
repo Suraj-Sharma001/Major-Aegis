@@ -73,7 +73,7 @@ function UserMenu() {
           <div className="px-3 py-2">
             <p className="text-sm font-medium truncate">{user?.name}</p>
             <p className="text-xs text-muted truncate">{user?.email}</p>
-            <div className="mt-2"><RoleBadge role={user?.role || 'VIEWER'} /></div>
+            <div className="mt-2"><RoleBadge role={user?.role || 'DEVELOPER'} /></div>
           </div>
           <div className="border-t my-1" />
           <button className="btn-quiet w-full !justify-start" onClick={() => { setOpen(false); navigate('/settings'); }}>

@@ -33,7 +33,7 @@ function AnalyticsTab({ appId }) {
 
 /* ---------------- API keys ---------------- */
 function KeysTab({ appId, appName }) {
-  const { canBuild } = useAuth();
+  const { canManageKeys } = useAuth();
   const keys = useAsync(() => appsApi.keys(appId), [appId]);
   const [creating, setCreating] = useState(false);
   const [label, setLabel] = useState('');
@@ -74,7 +74,7 @@ function KeysTab({ appId, appName }) {
     <>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted">Client apps send one of these in the <code className="font-mono text-xs bg-sunken rounded px-1.5 py-0.5">x-api-key</code> header.</p>
-        {canBuild && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New key</button>}
+        {canManageKeys && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New key</button>}
       </div>
 
       {keys.error ? (
@@ -84,7 +84,7 @@ function KeysTab({ appId, appName }) {
           {keys.loading ? (
             <div className="p-4 space-y-3">{[0, 1].map((i) => <Skeleton key={i} className="h-12" />)}</div>
           ) : keys.data.keys.length === 0 ? (
-            <EmptyState icon={KeyRound} title="No gateway keys" description="Issue a key so this application can call the gateway." action={canBuild && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New key</button>} />
+            <EmptyState icon={KeyRound} title="No gateway keys" description="Issue a key so this application can call the gateway." action={canManageKeys && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New key</button>} />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[620px]">
@@ -98,7 +98,7 @@ function KeysTab({ appId, appName }) {
                       <td className="td text-muted">{timeAgo(k.lastUsedAt)}</td>
                       <td className="td text-muted">{fmtDateTime(k.createdAt)}</td>
                       <td className="td text-right">
-                        {canBuild && k.isActive && <button className="btn-quiet !h-8 text-danger hover:!text-danger" onClick={() => setRevoking(k)}><Ban className="h-4 w-4" /> Revoke</button>}
+                        {canManageKeys && k.isActive && <button className="btn-quiet !h-8 text-danger hover:!text-danger" onClick={() => setRevoking(k)}><Ban className="h-4 w-4" /> Revoke</button>}
                       </td>
                     </tr>
                   ))}

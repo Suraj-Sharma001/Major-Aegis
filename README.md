@@ -5,7 +5,7 @@ Phase 1 is backend-only (no UI) and contains exactly four features:
 
 | # | Feature | Where it lives |
 |---|---------|----------------|
-| 1 | **Authentication & Authorization** — register (org + first admin), login (JWT), roles ADMIN / DEVELOPER / VIEWER, protected dashboard routes (JWT), protected gateway routes (API key) | `middleware/auth.middleware.js`, `middleware/apiKey.middleware.js`, `controllers/auth.controller.js`, `lib/jwt.js` |
+| 1 | **Authentication & Authorization** — register (org + first admin), login (JWT), roles ADMIN / DEVELOPER, protected dashboard routes (JWT), protected gateway routes (API key) | `middleware/auth.middleware.js`, `middleware/apiKey.middleware.js`, `controllers/auth.controller.js`, `lib/jwt.js` |
 | 2 | **Multi-Tenancy** — organization isolation, teams, team-scoped visibility, `assertCanAccessApplication` | `lib/authz.js`, `controllers/team.controller.js`, `controllers/application.controller.js` |
 | 3 | **Gateway Core** — `POST /v1/chat/completions`, model-prefix routing, **BYOK**, AES-256-GCM key encryption, OpenAI / Claude / Gemini / Ollama | `controllers/gateway.controller.js`, `services/providers/*`, `lib/crypto.js`, `controllers/providerKey.controller.js` |
 | 4 | **Semantic Caching** — hybrid (embedding + keyword) matching, Redis 24 h TTL, Python embedding service, cache-hit analytics, cost savings | `services/semanticCache.service.js`, `embedding-service/app.py`, `controllers/analytics.controller.js` |
@@ -100,7 +100,7 @@ Using a local model instead: `model = "llama3.2"` (anything not starting with gp
 | `POST /teams` | ADMIN | |
 | `GET /teams/:id/members` · `POST /teams/:id/members` · `DELETE /teams/:id/members/:userId` | ADMIN | POST adds an org user, or creates the account if `name` + `password` are given |
 | `GET /applications` | JWT | team-filtered for non-admins |
-| `POST /applications` | ADMIN, DEVELOPER | body `{name, teamId}`; developers only in their own teams |
+| `POST /applications` | ADMIN | body `{name, teamId}` |
 | `POST /applications/:id/keys` · `GET …/keys` · `DELETE …/keys/:keyId` | ADMIN/DEVELOPER (issue, revoke) · team members (list) | key shown once, only a SHA-256 hash is stored |
 | `GET /applications/:id/analytics` · `GET …/logs?limit=` | team members | cache hit rate, tokens, cost, savings, latency cached vs uncached |
 | `GET/POST/DELETE /provider-keys` | ADMIN | `provider`: OPENAI, GEMINI, CLAUDE. Metadata only is ever returned. |

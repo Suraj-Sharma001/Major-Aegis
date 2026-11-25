@@ -16,7 +16,7 @@ export async function listApplications(req, res) {
 }
 
 export async function createApplication(req, res) {
-  assertRole(req.user, 'ADMIN', 'DEVELOPER');
+  assertRole(req.user, 'ADMIN');
   const { name, teamId } = createApplicationSchema.parse(req.body);
   const team = await assertTeamInOrg(req.user, teamId);
 

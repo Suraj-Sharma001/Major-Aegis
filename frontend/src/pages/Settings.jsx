@@ -11,8 +11,7 @@ import { initials } from '../lib/format';
 
 const ROLE_INFO = {
   ADMIN: 'Full access: teams, members, provider keys, applications and keys.',
-  DEVELOPER: 'Can create applications and gateway keys in teams they belong to.',
-  VIEWER: 'Read-only access to applications in their teams.',
+  DEVELOPER: 'Can issue and revoke gateway keys for applications in their teams.',
 };
 
 function Section({ title, description, children }) {

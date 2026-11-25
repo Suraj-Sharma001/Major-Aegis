@@ -25,13 +25,13 @@ async function loadOverview(isAdmin) {
   return { applications, rows, failed, providerKeys, recent };
 }
 
-function GettingStarted({ data, isAdmin, canBuild }) {
+function GettingStarted({ data, isAdmin, canCreateApps, canManageKeys }) {
   const hasKeys = data.applications.some((a) => a._count.apiKeys > 0);
   const hasRequests = data.rows.some((r) => r.analytics.totalRequests > 0);
   const steps = [
     ...(isAdmin ? [{ done: (data.providerKeys || []).some((k) => k.isActive), title: 'Add a provider key', text: 'Bring your own OpenAI, Claude or Gemini key.', to: '/provider-keys' }] : []),
-    { done: data.applications.length > 0, title: 'Create an application', text: 'One per client app, owned by a team.', to: '/applications', hide: !canBuild },
-    { done: hasKeys, title: 'Issue a gateway key', text: 'Your app sends this key with every request.', to: '/applications', hide: !canBuild },
+    { done: data.applications.length > 0, title: 'Create an application', text: 'One per client app, owned by a team.', to: '/applications', hide: !canCreateApps },
+    { done: hasKeys, title: 'Issue a gateway key', text: 'Your app sends this key with every request.', to: '/applications', hide: !canManageKeys },
     { done: hasRequests, title: 'Send a request', text: 'Try it in the Playground, then ask the same thing again.', to: '/playground' },
   ].filter((s) => !s.hide);
 
@@ -57,7 +57,7 @@ function GettingStarted({ data, isAdmin, canBuild }) {
 }
 
 export default function Overview() {
-  const { user, isAdmin, canBuild } = useAuth();
+  const { user, isAdmin, canCreateApps, canManageKeys } = useAuth();
   const ov = useAsync(() => loadOverview(isAdmin), [isAdmin]);
 
   if (ov.error) return <ErrorState message={ov.error} onRetry={ov.reload} />;
@@ -81,7 +81,7 @@ export default function Overview() {
       {failed > 0 && <p className="mb-4 text-sm text-danger">Analytics could not be loaded for {failed} application{failed > 1 ? 's' : ''}. Totals below are partial.</p>}
 
       {!hasTraffic ? (
-        <GettingStarted data={ov.data} isAdmin={isAdmin} canBuild={canBuild} />
+        <GettingStarted data={ov.data} isAdmin={isAdmin} canCreateApps={canCreateApps} canManageKeys={canManageKeys} />
       ) : (
         <div className="space-y-6">
           <div className="card p-6">

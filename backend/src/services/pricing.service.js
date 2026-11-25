@@ -9,9 +9,13 @@ const PRICES = [
   ['claude-opus', 15, 75],
   ['claude-sonnet', 3, 15],
   ['claude-haiku', 0.8, 4],
+  ['gemini-3.8-flash', 0.75, 3.75],
+  ['gemini-3.6-flash', 0.75, 3.75],
+  ['gemini-3.5-flash-lite', 0.3, 2.5],
   ['gemini-2.5-pro', 1.25, 10],
-  ['gemini-2.5-flash', 0.3, 2.5],
   ['gemini-2.0-flash', 0.1, 0.4],
+  ['grok-2-mini', 0.2, 0.6],
+  ['grok-2', 2, 10],
 ];
 
 export function calculateCost(provider, model, promptTokens, completionTokens) {

@@ -52,7 +52,8 @@ export function AuthProvider({ children }) {
   const value = {
     user, organization, teams, loading,
     isAdmin: user?.role === 'ADMIN',
-    canBuild: user?.role === 'ADMIN' || user?.role === 'DEVELOPER',
+    canCreateApps: user?.role === 'ADMIN',
+    canManageKeys: user?.role === 'ADMIN' || user?.role === 'DEVELOPER',
     login, register, logout, refreshProfile: loadProfile,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

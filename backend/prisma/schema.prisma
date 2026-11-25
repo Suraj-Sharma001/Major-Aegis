@@ -12,7 +12,6 @@ datasource db {
 enum Role {
   ADMIN
   DEVELOPER
-  VIEWER
 }
 
 enum Provider {
@@ -20,6 +19,7 @@ enum Provider {
   GEMINI
   CLAUDE
   OLLAMA
+  GROK
 }
 
 enum LogStatus {

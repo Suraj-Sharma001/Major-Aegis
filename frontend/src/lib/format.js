@@ -37,4 +37,4 @@ export function timeAgo(iso) {
 export const initials = (name = '') =>
   name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('') || '?';
 
-export const PROVIDER_LABEL = { OPENAI: 'OpenAI', CLAUDE: 'Claude', GEMINI: 'Gemini', OLLAMA: 'Ollama' };
+export const PROVIDER_LABEL = { OPENAI: 'OpenAI', CLAUDE: 'Claude', GEMINI: 'Gemini', GROK: 'Grok', OLLAMA: 'Ollama' };

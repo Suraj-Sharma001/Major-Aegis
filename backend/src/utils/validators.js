@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const email = z.string().trim().toLowerCase().email();
 const password = z.string().min(8, 'Password must be at least 8 characters').max(128);
-const roleEnum = z.enum(['ADMIN', 'DEVELOPER', 'VIEWER']);
+const roleEnum = z.enum(['ADMIN', 'DEVELOPER']);
 
 export const registerSchema = z.object({
   organizationName: z.string().trim().min(2).max(100),
@@ -30,7 +30,7 @@ export const createApplicationSchema = z.object({
 export const createKeySchema = z.object({ label: z.string().trim().min(1).max(100).default('default') });
 
 export const providerKeySchema = z.object({
-  provider: z.enum(['OPENAI', 'GEMINI', 'CLAUDE']),
+  provider: z.enum(['OPENAI', 'GEMINI', 'CLAUDE', 'GROK']),
   label: z.string().trim().min(1).max(100).default('default'),
   apiKey: z.string().trim().min(8, 'apiKey looks too short'),
 });

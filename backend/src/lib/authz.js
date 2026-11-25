@@ -2,6 +2,7 @@ import { prisma } from '../config/prisma.js';
 import { AppError } from './errors.js';
 
 export const isAdmin = (user) => user.role === 'ADMIN';
+export const isDeveloper = (user) => user.role === 'DEVELOPER';
 
 export function assertRole(user, ...roles) {
   if (!roles.includes(user.role)) {

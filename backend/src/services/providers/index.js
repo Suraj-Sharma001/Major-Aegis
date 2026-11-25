@@ -5,14 +5,16 @@ import * as openai from './openai.provider.js';
 import * as claude from './claude.provider.js';
 import * as gemini from './gemini.provider.js';
 import * as ollama from './ollama.provider.js';
+import * as grok from './grok.provider.js';
 
-const ADAPTERS = { OPENAI: openai, CLAUDE: claude, GEMINI: gemini, OLLAMA: ollama };
+const ADAPTERS = { OPENAI: openai, CLAUDE: claude, GEMINI: gemini, OLLAMA: ollama, GROK: grok };
 
 export function resolveProvider(model) {
   const m = model.toLowerCase();
   if (/^(gpt|chatgpt|o\d)/.test(m)) return 'OPENAI';
   if (m.startsWith('claude')) return 'CLAUDE';
   if (m.startsWith('gemini')) return 'GEMINI';
+  if (m.startsWith('grok')) return 'GROK';
   return 'OLLAMA';
 }
 

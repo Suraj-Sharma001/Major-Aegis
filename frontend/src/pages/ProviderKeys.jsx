@@ -6,7 +6,7 @@ import { useAsync } from '../hooks/useAsync';
 import { Badge, ConfirmDialog, EmptyState, ErrorState, Field, Modal, PageHeader, Skeleton, Spinner } from '../components/ui';
 import { fmtDate, PROVIDER_LABEL } from '../lib/format';
 
-const PROVIDERS = ['OPENAI', 'CLAUDE', 'GEMINI'];
+const PROVIDERS = ['OPENAI', 'CLAUDE', 'GROK', 'GEMINI'];
 
 export default function ProviderKeys() {
   const keys = useAsync(() => providerKeysApi.list());

@@ -89,8 +89,7 @@ function AddMemberModal({ open, onClose, team, onDone }) {
             <Field label="Temporary password" hint="At least 8 characters. Share it with them securely."><input className="input" type="text" autoComplete="off" value={form.password} onChange={set('password')} /></Field>
             <Field label="Role">
               <select className="input" value={form.role} onChange={set('role')}>
-                <option value="DEVELOPER">Developer: can create applications and keys</option>
-                <option value="VIEWER">Viewer: read-only</option>
+                <option value="DEVELOPER">Developer: can issue and revoke gateway keys</option>
                 <option value="ADMIN">Admin: full access</option>
               </select>
             </Field>

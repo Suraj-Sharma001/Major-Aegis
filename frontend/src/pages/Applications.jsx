@@ -59,7 +59,7 @@ function CreateAppModal({ open, onClose, teams }) {
 }
 
 export default function Applications() {
-  const { canBuild } = useAuth();
+  const { canCreateApps } = useAuth();   // was canBuild
   const apps = useAsync(() => appsApi.list());
   const teams = useAsync(() => teamsApi.list());
   const [query, setQuery] = useState('');
@@ -77,7 +77,7 @@ export default function Applications() {
       <PageHeader
         title="Applications"
         description="Each application gets its own gateway keys, request logs and cache analytics."
-        actions={canBuild && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New application</button>}
+        actions={canCreateApps && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New application</button>}
       />
 
       {apps.error ? (
@@ -104,8 +104,8 @@ export default function Applications() {
               <EmptyState
                 icon={AppWindow}
                 title="No applications yet"
-                description={canBuild ? 'Create your first application, then issue a gateway key for it.' : 'Applications from your teams will show up here.'}
-                action={canBuild && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New application</button>}
+                description={canCreateApps ? 'Create your first application, then issue a gateway key for it.' : 'Applications from your teams will show up here.'}
+                action={canCreateApps && <button className="btn-primary" onClick={() => setCreating(true)}><Plus className="h-4 w-4" /> New application</button>}
               />
             ) : filtered.length === 0 ? (
               <EmptyState icon={Search} title="No matches" description="Try a different name or team." />

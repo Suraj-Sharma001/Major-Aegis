@@ -54,6 +54,7 @@ export const env = {
     OPENAI: str('OPENAI_BASE_URL', 'https://api.openai.com').replace(/\/$/, ''),
     CLAUDE: str('ANTHROPIC_BASE_URL', 'https://api.anthropic.com').replace(/\/$/, ''),
     GEMINI: str('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com').replace(/\/$/, ''),
+    GROK: str('GROK_BASE_URL', 'https://api.x.ai').replace(/\/$/, ''),
     OLLAMA: str('OLLAMA_BASE_URL', 'http://localhost:11434').replace(/\/$/, ''),
   },
   providerTimeoutMs: num('PROVIDER_TIMEOUT_MS', 60000),
